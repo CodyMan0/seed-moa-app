@@ -1,11 +1,12 @@
 import '@/global.css';
-import { setupNotificationHandler } from '@/features/notifications';
+import { setupNotificationHandler, scheduleMonthlyReminder } from '@/features/notifications';
 import { NAV_THEME } from '@/shared/components/ui/lib/theme';
 import { AppSplashScreen } from '@/shared/components/ui/splash-screen';
 import { useSession } from '@/shared/hooks/useSession';
 
 import { ThemeProvider } from '@react-navigation/native';
 import { PortalHost } from '@rn-primitives/portal';
+import { useFonts } from 'expo-font';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { Stack, router } from 'expo-router';
@@ -25,6 +26,13 @@ export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const { isLoading, session } = useSession();
   const [showSplash, setShowSplash] = React.useState(true);
+
+  const [fontsLoaded] = useFonts({
+    'Pretendard-Regular': require('../assets/fonts/Pretendard-Regular.otf'),
+    'Pretendard-Medium': require('../assets/fonts/Pretendard-Medium.otf'),
+    'Pretendard-SemiBold': require('../assets/fonts/Pretendard-SemiBold.otf'),
+    'Pretendard-Bold': require('../assets/fonts/Pretendard-Bold.otf'),
+  });
 
   const handleSplashFinish = React.useCallback(() => {
     setShowSplash(false);
@@ -51,6 +59,7 @@ export default function RootLayout() {
         if (status !== 'granted') {
           Notifications.requestPermissionsAsync();
         }
+        scheduleMonthlyReminder();
       });
     }
   }, [session?.user]);
@@ -63,7 +72,7 @@ export default function RootLayout() {
     );
   }
 
-  if (isLoading) {
+  if (!fontsLoaded || isLoading) {
     return (
       <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
         <View className="flex-1 items-center justify-center bg-background">
