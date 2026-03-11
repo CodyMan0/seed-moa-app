@@ -3,11 +3,12 @@ import { Card, CardContent } from '@/shared/components/ui/card'
 import { Text } from '@/shared/components/ui/text'
 import { useSession } from '@/shared/hooks/useSession'
 import { getDueVerses, getUserStreak } from '@/entities/memorize'
+import { supabase } from '@/shared/supabase/supabase'
+import { MemorizeCalendar } from '@/widgets/calendar'
 import type { Database } from '@/shared/supabase/types'
 import { router, useFocusEffect } from 'expo-router'
 import * as React from 'react'
-import { ActivityIndicator, RefreshControl, ScrollView, View } from 'react-native'
-import { Pressable } from 'react-native'
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, View } from 'react-native'
 
 type MemorizeVerseRow = Database['public']['Tables']['memorize_verses']['Row']
 type UserStreakRow = Database['public']['Tables']['user_streaks']['Row']
@@ -16,18 +17,29 @@ export default function HomeScreen() {
   const { session, isLoading: sessionLoading } = useSession()
   const [dueVerses, setDueVerses] = React.useState<MemorizeVerseRow[]>([])
   const [streak, setStreak] = React.useState<UserStreakRow | null>(null)
+  const [practicedDates, setPracticedDates] = React.useState<string[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [refreshing, setRefreshing] = React.useState(false)
 
   const fetchData = React.useCallback(async () => {
     if (!session?.user?.id) return
     try {
-      const [versesData, streakData] = await Promise.all([
+      const [versesData, streakData, reviewLogsData] = await Promise.all([
         getDueVerses(session.user.id),
         getUserStreak(session.user.id).catch(() => null),
+        supabase
+          .from('review_logs')
+          .select('practiced_at')
+          .eq('user_id', session.user.id)
+          .then(({ data }) => data),
       ])
       setDueVerses(versesData)
       setStreak(streakData)
+
+      const dates = reviewLogsData
+        ?.map((log) => log.practiced_at?.split('T')[0])
+        .filter((d): d is string => Boolean(d)) ?? []
+      setPracticedDates([...new Set(dates)])
     } catch (error) {
       console.error('Failed to fetch home data:', error)
     } finally {
@@ -94,6 +106,11 @@ export default function HomeScreen() {
           </CardContent>
         </Card>
       )}
+
+      {/* Calendar */}
+      <View className="mb-6">
+        <MemorizeCalendar practicedDates={practicedDates} />
+      </View>
 
       <Text variant="h3" className="mb-6 text-foreground">
         오늘의 암송

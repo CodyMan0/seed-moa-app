@@ -2,6 +2,10 @@ import * as React from 'react';
 import { Alert, View } from 'react-native';
 
 import type { BibleBook } from '@/entities/bible';
+import {
+  requestNotificationPermissions,
+  scheduleVerseReminders,
+} from '@/features/notifications';
 import { BookList, ChapterGrid, VerseList } from '@/features/select-verse';
 import { Text } from '@/shared/components/ui/text';
 import { supabase } from '@/shared/supabase/supabase';
@@ -62,6 +66,28 @@ export default function BibleScreen() {
       if (error) {
         Alert.alert('오류', '저장에 실패했습니다.');
         return;
+      }
+
+      // Schedule push notification reminders for the new verse
+      const hasPermission = await requestNotificationPermissions();
+      if (hasPermission) {
+        // Query the inserted verse to get its ID
+        const { data: insertedVerse } = await supabase
+          .from('memorize_verses')
+          .select('id')
+          .eq('user_id', session.user.id)
+          .eq('reference', payload.reference)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (insertedVerse) {
+          await scheduleVerseReminders(
+            insertedVerse.id,
+            payload.reference,
+            payload.text,
+          );
+        }
       }
 
       Alert.alert('완료', `${payload.reference}이(가) 암송 목록에 추가되었습니다.`);
