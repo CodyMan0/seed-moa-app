@@ -15,8 +15,8 @@ export async function getDueVerses(userId: string) {
     .from('memorize_verses')
     .select('*')
     .eq('user_id', userId)
-    .lte('next_review_at', new Date().toISOString())
-    .order('next_review_at', { ascending: true })
+    .eq('status', 'learning')
+    .order('created_at', { ascending: true })
   if (error) throw error
   return data
 }

@@ -4,8 +4,7 @@ export default function PracticeLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: true,
-        headerBackTitle: '뒤로',
+        headerShown: false,
       }}
     />
   );

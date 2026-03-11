@@ -1,17 +1,11 @@
 import { supabase } from '@/shared/supabase/supabase'
-import { calculateNextReview } from '@/features/practice/lib/spaced-repetition'
 
 export async function completeReview(
   verseId: string,
   userId: string,
   quality: number,
-  mode: string,
-  currentEaseFactor: number,
-  currentInterval: number,
-  reviewCount: number
+  mode: string
 ) {
-  const result = calculateNextReview(quality, currentEaseFactor, currentInterval, reviewCount)
-
   await supabase.from('review_logs').insert({
     verse_id: verseId,
     user_id: userId,
@@ -19,14 +13,16 @@ export async function completeReview(
     mode,
   })
 
+  const { data: verse } = await supabase
+    .from('memorize_verses')
+    .select('review_count')
+    .eq('id', verseId)
+    .single()
+
   await supabase
     .from('memorize_verses')
     .update({
-      ease_factor: result.easeFactor,
-      interval_days: result.intervalDays,
-      next_review_at: result.nextReviewAt.toISOString(),
-      review_count: reviewCount + 1,
-      status: result.intervalDays >= 30 ? 'mastered' : 'learning',
+      review_count: (verse?.review_count ?? 0) + 1,
     })
     .eq('id', verseId)
 
@@ -61,6 +57,4 @@ export async function completeReview(
       })
       .eq('id', userId)
   }
-
-  return result
 }
