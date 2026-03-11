@@ -78,10 +78,10 @@ export function BlankMode({ verseText, reference, onNext }: BlankModeProps) {
   return (
     <View className="flex-1 px-6 gap-6">
       <View className="items-center gap-2 pt-4">
-        <Text variant="muted" className="text-base">
+        <Text className="text-base text-seed font-semibold">
           {reference}
         </Text>
-        <View className="w-12 h-0.5 bg-border rounded-full" />
+        <View className="w-12 h-0.5 bg-seed/40 rounded-full" />
       </View>
 
       <ScrollView className="flex-1" contentContainerClassName="py-4">
@@ -94,7 +94,7 @@ export function BlankMode({ verseText, reference, onNext }: BlankModeProps) {
                     className={cn(
                       'rounded-md border-2 border-dashed px-2 py-1 min-w-[48px] items-center',
                       i === currentBlankIndex
-                        ? 'border-primary bg-primary/5'
+                        ? 'border-seed bg-seed/5'
                         : 'border-muted-foreground/30'
                     )}
                   >
@@ -117,15 +117,15 @@ export function BlankMode({ verseText, reference, onNext }: BlankModeProps) {
               {options.map((word, i) => (
                 <Pressable
                   key={`${word}-${i}`}
-                  className="rounded-lg border border-border bg-card px-4 py-2.5 active:bg-accent"
+                  className="rounded-lg border border-border bg-secondary px-4 py-2.5 active:bg-seed/20"
                   onPress={() => handleOptionTap(word, i)}
                 >
-                  <Text className="text-base text-foreground">{word}</Text>
+                  <Text className="text-base text-secondary-foreground">{word}</Text>
                 </Pressable>
               ))}
             </View>
             {incorrectCount > 0 && (
-              <Text variant="muted" className="text-sm text-center mt-3">
+              <Text className="text-sm text-destructive text-center mt-3">
                 틀린 횟수: {incorrectCount}
               </Text>
             )}
@@ -135,8 +135,8 @@ export function BlankMode({ verseText, reference, onNext }: BlankModeProps) {
 
       {allFilled && (
         <View className="pb-4">
-          <Button className="w-full" onPress={onNext}>
-            <Text>다음</Text>
+          <Button className="w-full bg-primary" onPress={onNext}>
+            <Text className="text-primary-foreground font-semibold">다음</Text>
           </Button>
         </View>
       )}

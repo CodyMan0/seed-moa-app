@@ -1,5 +1,6 @@
 import { Text } from '@/shared/components/ui/text'
 import { Button } from '@/shared/components/ui/button'
+import { SeedCharacter, getGrowthStage, getGrowthLabel } from '@/shared/components/ui/seed-character'
 import { useSession } from '@/shared/hooks/useSession'
 import { getMemorizeVerse } from '@/entities/memorize'
 import { PracticeScreen } from '@/features/practice'
@@ -56,7 +57,7 @@ export default function PracticeScreenPage() {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-background items-center justify-center" edges={['bottom']}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="hsl(25 40% 64%)" />
       </SafeAreaView>
     )
   }
@@ -68,16 +69,25 @@ export default function PracticeScreenPage() {
           <Text variant="muted">
             {error ?? '구절을 찾을 수 없습니다'}
           </Text>
-          <Button variant="outline" className="w-full" onPress={() => router.back()}>
-            <Text>돌아가기</Text>
+          <Button variant="outline" className="w-full border-border" onPress={() => router.back()}>
+            <Text className="text-foreground">돌아가기</Text>
           </Button>
         </View>
       </SafeAreaView>
     )
   }
 
+  const stage = getGrowthStage(verse.review_count, verse.status)
+
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      {/* Growth character header */}
+      <View className="items-center pt-4 pb-2 gap-1">
+        <SeedCharacter stage={stage} size={48} />
+        <Text className="text-xs text-muted-foreground">
+          {getGrowthLabel(stage)} 단계
+        </Text>
+      </View>
       <PracticeScreen
         verseText={verse.text}
         reference={verse.reference}

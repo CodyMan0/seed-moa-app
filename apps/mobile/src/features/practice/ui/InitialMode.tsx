@@ -17,10 +17,10 @@ export function InitialMode({ verseText, reference, onNext }: InitialModeProps) 
   return (
     <View className="flex-1 justify-center px-6 gap-8">
       <View className="items-center gap-2">
-        <Text variant="muted" className="text-base">
+        <Text className="text-base text-seed font-semibold">
           {reference}
         </Text>
-        <View className="w-12 h-0.5 bg-border rounded-full" />
+        <View className="w-12 h-0.5 bg-seed/40 rounded-full" />
       </View>
 
       <View className="rounded-2xl border border-border bg-card p-8">
@@ -35,13 +35,13 @@ export function InitialMode({ verseText, reference, onNext }: InitialModeProps) 
             <Text variant="muted" className="text-sm">
               초성을 보고 말씀을 떠올려 보세요
             </Text>
-            <Button variant="outline" className="w-full" onPress={() => setRevealed(true)}>
-              <Text>정답 보기</Text>
+            <Button variant="outline" className="w-full border-border" onPress={() => setRevealed(true)}>
+              <Text className="text-foreground">정답 보기</Text>
             </Button>
           </>
         ) : (
-          <Button className="w-full" onPress={onNext}>
-            <Text>다음</Text>
+          <Button className="w-full bg-primary" onPress={onNext}>
+            <Text className="text-primary-foreground font-semibold">다음</Text>
           </Button>
         )}
       </View>

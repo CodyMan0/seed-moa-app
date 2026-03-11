@@ -27,13 +27,14 @@ const MODE_LABELS: Record<PracticeMode, string> = {
 interface QualityOption {
   label: string
   quality: number
-  variant: 'outline' | 'secondary' | 'default'
+  className: string
+  textClassName: string
 }
 
 const QUALITY_OPTIONS: QualityOption[] = [
-  { label: '어려웠어요', quality: 2, variant: 'outline' },
-  { label: '보통이에요', quality: 3, variant: 'secondary' },
-  { label: '쉬웠어요', quality: 5, variant: 'default' },
+  { label: '어려웠어요', quality: 2, className: 'bg-bloom-light', textClassName: 'text-white' },
+  { label: '보통이에요', quality: 3, className: 'bg-seed', textClassName: 'text-white' },
+  { label: '쉬웠어요', quality: 5, className: 'bg-sprout', textClassName: 'text-white' },
 ]
 
 export function PracticeScreen({ verseText, reference, onComplete }: PracticeScreenProps) {
@@ -66,9 +67,9 @@ export function PracticeScreen({ verseText, reference, onComplete }: PracticeScr
               className={cn(
                 'flex-1 h-1.5 rounded-full',
                 i < progress
-                  ? 'bg-primary'
+                  ? 'bg-sprout'
                   : i === progress && !showRating
-                    ? 'bg-primary/40'
+                    ? 'bg-seed'
                     : 'bg-muted'
               )}
             />
@@ -97,12 +98,11 @@ export function PracticeScreen({ verseText, reference, onComplete }: PracticeScr
             {QUALITY_OPTIONS.map((option) => (
               <Button
                 key={option.quality}
-                variant={option.variant}
                 size="lg"
-                className="w-full"
+                className={cn('w-full', option.className)}
                 onPress={() => handleRate(option.quality)}
               >
-                <Text>{option.label}</Text>
+                <Text className={cn('font-semibold', option.textClassName)}>{option.label}</Text>
               </Button>
             ))}
           </View>

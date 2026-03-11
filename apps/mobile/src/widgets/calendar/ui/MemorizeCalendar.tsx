@@ -100,7 +100,7 @@ function MemorizeCalendar({ practicedDates, onDatePress }: MemorizeCalendarProps
           <View key={index} className="flex-1 items-center">
             <Text
               className={`text-xs font-medium ${
-                index === 0 ? 'text-red-400' : index === 6 ? 'text-blue-400' : 'text-muted-foreground'
+                index === 0 ? 'text-bloom' : index === 6 ? 'text-water' : 'text-muted-foreground'
               }`}
             >
               {name}
@@ -130,19 +130,19 @@ function MemorizeCalendar({ practicedDates, onDatePress }: MemorizeCalendarProps
               >
                 <View
                   className={`h-8 w-8 items-center justify-center rounded-full ${
-                    isToday ? 'border-2 border-primary' : ''
-                  } ${isPracticed ? 'bg-green-500/20' : ''}`}
+                    isToday ? 'border-2 border-seed' : ''
+                  } ${isPracticed ? 'bg-sprout/20' : ''}`}
                 >
                   <Text
                     className={`text-sm ${
-                      isToday ? 'font-bold text-primary' : 'text-foreground'
+                      isToday ? 'font-bold text-seed' : 'text-foreground'
                     }`}
                   >
                     {day}
                   </Text>
                 </View>
                 {isPracticed && (
-                  <View className="mt-0.5 h-1 w-1 rounded-full bg-green-500" />
+                  <View className="mt-0.5 h-1 w-1 rounded-full bg-sprout" />
                 )}
               </TouchableOpacity>
             )

@@ -48,10 +48,10 @@ export function TypingMode({ verseText, reference, onNext }: TypingModeProps) {
   return (
     <View className="flex-1 px-6 gap-6">
       <View className="items-center gap-2 pt-4">
-        <Text variant="muted" className="text-base">
+        <Text className="text-base text-seed font-semibold">
           {reference}
         </Text>
-        <View className="w-12 h-0.5 bg-border rounded-full" />
+        <View className="w-12 h-0.5 bg-seed/40 rounded-full" />
       </View>
 
       <ScrollView className="flex-1" contentContainerClassName="py-4 gap-6">
@@ -65,7 +65,7 @@ export function TypingMode({ verseText, reference, onNext }: TypingModeProps) {
               multiline
               textAlignVertical="top"
               placeholder="여기에 입력하세요..."
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor="hsl(30 16% 47%)"
               value={input}
               onChangeText={setInput}
               autoFocus
@@ -83,8 +83,8 @@ export function TypingMode({ verseText, reference, onNext }: TypingModeProps) {
                     key={i}
                     className={
                       part.correct
-                        ? 'text-lg text-green-600 dark:text-green-400'
-                        : 'text-lg text-red-500 dark:text-red-400 line-through'
+                        ? 'text-lg text-sprout'
+                        : 'text-lg text-destructive line-through'
                     }
                   >
                     {part.text}
@@ -104,7 +104,7 @@ export function TypingMode({ verseText, reference, onNext }: TypingModeProps) {
 
             {allCorrect && (
               <View className="items-center py-2">
-                <Text className="text-lg font-semibold text-green-600 dark:text-green-400">
+                <Text className="text-lg font-semibold text-sprout">
                   정확하게 입력했습니다!
                 </Text>
               </View>
@@ -116,15 +116,15 @@ export function TypingMode({ verseText, reference, onNext }: TypingModeProps) {
       <View className="pb-4">
         {!checked ? (
           <Button
-            className="w-full"
+            className="w-full bg-primary"
             onPress={handleCheck}
             disabled={input.trim().length === 0}
           >
-            <Text>확인</Text>
+            <Text className="text-primary-foreground font-semibold">확인</Text>
           </Button>
         ) : (
-          <Button className="w-full" onPress={onNext}>
-            <Text>다음</Text>
+          <Button className="w-full bg-primary" onPress={onNext}>
+            <Text className="text-primary-foreground font-semibold">다음</Text>
           </Button>
         )}
       </View>

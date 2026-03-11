@@ -1,5 +1,6 @@
 import { Button } from '@/shared/components/ui/button';
 import { Text } from '@/shared/components/ui/text';
+import { SeedCharacter } from '@/shared/components/ui/seed-character';
 import { signUpWithEmail } from '@/features/auth';
 import { Link } from 'expo-router';
 import * as React from 'react';
@@ -44,11 +45,12 @@ export default function SignupScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View className="flex-1 items-center justify-center px-8">
-          <View className="mb-10 items-center gap-2">
+          <View className="mb-10 items-center gap-3">
+            <SeedCharacter stage={1} size={100} />
             <Text variant="h1" className="text-foreground">
               회원가입
             </Text>
-            <Text variant="muted">말씀암송을 시작해보세요</Text>
+            <Text variant="muted">함께 말씀을 심어가요</Text>
           </View>
 
           {error && (
@@ -59,9 +61,9 @@ export default function SignupScreen() {
 
           <View className="w-full gap-3">
             <TextInput
-              className="h-12 rounded-lg border border-input bg-background px-4 text-base text-foreground"
+              className="h-12 rounded-lg border border-border bg-card px-4 text-base text-foreground"
               placeholder="이메일"
-              placeholderTextColor="hsl(0 0% 45.1%)"
+              placeholderTextColor="hsl(30 16% 47%)"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -69,18 +71,18 @@ export default function SignupScreen() {
               autoComplete="email"
             />
             <TextInput
-              className="h-12 rounded-lg border border-input bg-background px-4 text-base text-foreground"
+              className="h-12 rounded-lg border border-border bg-card px-4 text-base text-foreground"
               placeholder="비밀번호"
-              placeholderTextColor="hsl(0 0% 45.1%)"
+              placeholderTextColor="hsl(30 16% 47%)"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
               autoComplete="new-password"
             />
             <TextInput
-              className="h-12 rounded-lg border border-input bg-background px-4 text-base text-foreground"
+              className="h-12 rounded-lg border border-border bg-card px-4 text-base text-foreground"
               placeholder="비밀번호 확인"
-              placeholderTextColor="hsl(0 0% 45.1%)"
+              placeholderTextColor="hsl(30 16% 47%)"
               value={passwordConfirm}
               onChangeText={setPasswordConfirm}
               secureTextEntry
@@ -89,17 +91,17 @@ export default function SignupScreen() {
           </View>
 
           <View className="mt-4 w-full gap-3">
-            <Button onPress={handleSignup} disabled={isLoading} size="lg" className="w-full">
+            <Button onPress={handleSignup} disabled={isLoading} size="lg" className="w-full bg-primary">
               {isLoading ? (
                 <ActivityIndicator size="small" color="hsl(0 0% 98%)" />
               ) : (
-                <Text>가입하기</Text>
+                <Text className="text-primary-foreground font-semibold">가입하기</Text>
               )}
             </Button>
 
             <Link href="/(auth)/login" asChild>
               <Button variant="ghost" className="w-full">
-                <Text>이미 계정이 있으신가요? 로그인</Text>
+                <Text className="text-muted-foreground">이미 계정이 있으신가요? 로그인</Text>
               </Button>
             </Link>
           </View>

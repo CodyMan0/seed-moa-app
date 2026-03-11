@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/shared/components/ui/card'
 import { Text } from '@/shared/components/ui/text'
+import { SeedCharacter, getGrowthStage, getGrowthLabel } from '@/shared/components/ui/seed-character'
 import { useSession } from '@/shared/hooks/useSession'
 import { getMemorizeVerses } from '@/entities/memorize'
 import type { Database } from '@/shared/supabase/types'
@@ -38,7 +39,7 @@ export default function MyVersesScreen() {
   if (sessionLoading || isLoading) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="hsl(25 40% 64%)" />
       </View>
     )
   }
@@ -51,28 +52,41 @@ export default function MyVersesScreen() {
     return `${date.getMonth() + 1}/${date.getDate()}`
   }
 
-  const renderVerseCard = (verse: MemorizeVerseRow) => (
-    <Pressable
-      key={verse.id}
-      onPress={() => router.push(`/practice/${verse.id}`)}
-    >
-      <Card>
-        <CardContent className="py-4 gap-1">
-          <View className="flex-row items-center justify-between">
-            <Text className="font-semibold text-foreground">
-              {verse.reference}
-            </Text>
-            <Text variant="muted" className="text-xs">
-              다음 복습: {verse.next_review_at ? formatDate(verse.next_review_at) : '-'}
-            </Text>
-          </View>
-          <Text variant="muted" numberOfLines={1}>
-            {verse.text}
-          </Text>
-        </CardContent>
-      </Card>
-    </Pressable>
-  )
+  const renderVerseCard = (verse: MemorizeVerseRow) => {
+    const stage = getGrowthStage(verse.review_count, verse.status)
+    return (
+      <Pressable
+        key={verse.id}
+        onPress={() => router.push(`/practice/${verse.id}`)}
+      >
+        <Card className="border-border">
+          <CardContent className="py-4 gap-1">
+            <View className="flex-row items-center gap-3">
+              <SeedCharacter stage={stage} size={32} />
+              <View className="flex-1 gap-1">
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-row items-center gap-2">
+                    <Text className="font-semibold text-foreground">
+                      {verse.reference}
+                    </Text>
+                    <Text className="text-xs text-muted-foreground">
+                      {getGrowthLabel(stage)}
+                    </Text>
+                  </View>
+                  <Text variant="muted" className="text-xs">
+                    다음 복습: {verse.next_review_at ? formatDate(verse.next_review_at) : '-'}
+                  </Text>
+                </View>
+                <Text variant="muted" numberOfLines={1}>
+                  {verse.text}
+                </Text>
+              </View>
+            </View>
+          </CardContent>
+        </Card>
+      </Pressable>
+    )
+  }
 
   return (
     <ScrollView
@@ -90,7 +104,8 @@ export default function MyVersesScreen() {
 
       {verses.length === 0 ? (
         <View className="flex-1 items-center justify-center">
-          <View className="w-full rounded-xl border border-border bg-card p-8">
+          <View className="w-full rounded-xl border border-border bg-card p-8 items-center gap-4">
+            <SeedCharacter stage={1} size={48} />
             <Text variant="muted" className="text-center">
               아직 암송 중인 구절이 없습니다
             </Text>
@@ -101,9 +116,12 @@ export default function MyVersesScreen() {
           {/* Learning section */}
           {learningVerses.length > 0 && (
             <View className="gap-3">
-              <Text className="font-semibold text-foreground">
-                암송 중 ({learningVerses.length})
-              </Text>
+              <View className="flex-row items-center gap-2">
+                <View className="h-2 w-2 rounded-full bg-sprout" />
+                <Text className="font-semibold text-foreground">
+                  암송 중 ({learningVerses.length})
+                </Text>
+              </View>
               {learningVerses.map(renderVerseCard)}
             </View>
           )}
@@ -111,9 +129,12 @@ export default function MyVersesScreen() {
           {/* Mastered section */}
           {masteredVerses.length > 0 && (
             <View className="gap-3">
-              <Text className="font-semibold text-foreground">
-                완료 ({masteredVerses.length})
-              </Text>
+              <View className="flex-row items-center gap-2">
+                <View className="h-2 w-2 rounded-full bg-bloom" />
+                <Text className="font-semibold text-foreground">
+                  완료 ({masteredVerses.length})
+                </Text>
+              </View>
               {masteredVerses.map(renderVerseCard)}
             </View>
           )}
