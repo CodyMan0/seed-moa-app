@@ -65,6 +65,36 @@ export type Database = {
         }
         Relationships: []
       }
+      inquiries: {
+        Row: {
+          id: string
+          user_id: string
+          category: string
+          content: string
+          email: string | null
+          created_at: string | null
+          status: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          category: string
+          content: string
+          email?: string | null
+          created_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          category?: string
+          content?: string
+          email?: string | null
+          created_at?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
