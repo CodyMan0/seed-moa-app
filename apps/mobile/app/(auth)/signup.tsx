@@ -4,10 +4,14 @@ import { SeedCharacter } from '@/shared/components/ui/seed-character';
 import { signUpWithEmail } from '@/features/auth';
 import { supabase } from '@/shared/supabase/supabase';
 import { Link, router } from 'expo-router';
+import { Eye, EyeOff } from 'lucide-react-native';
 import * as React from 'react';
 import {
   ActivityIndicator,
+  Animated,
+  Dimensions,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -16,6 +20,103 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { GrowthStage } from '@/shared/components/ui/seed-character';
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SHEET_HEIGHT = 360;
+
+function BottomSheetPicker({
+  title,
+  options,
+  suffix,
+  selected,
+  onSelect,
+  onClose,
+}: {
+  title: string;
+  options: number[];
+  suffix: string;
+  selected: number | null;
+  onSelect: (value: number) => void;
+  onClose: () => void;
+}) {
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const slideAnim = React.useRef(new Animated.Value(SHEET_HEIGHT)).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [fadeAnim, slideAnim]);
+
+  const handleClose = () => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: SHEET_HEIGHT,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => onClose());
+  };
+
+  return (
+    <Modal visible transparent animationType="none">
+      <Animated.View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', opacity: fadeAnim }}>
+        <Pressable style={{ flex: 1 }} onPress={handleClose} />
+      </Animated.View>
+      <Animated.View
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: SHEET_HEIGHT,
+          transform: [{ translateY: slideAnim }],
+          backgroundColor: 'hsl(0 0% 100%)',
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
+          paddingHorizontal: 24,
+          paddingTop: 16,
+          paddingBottom: 32,
+        }}
+      >
+        <View style={{ width: 40, height: 4, backgroundColor: 'hsl(30 35% 82%)', borderRadius: 2, alignSelf: 'center', marginBottom: 12 }} />
+        <Text className="mb-4 text-center font-semibold text-foreground">{title}</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {options.map((opt) => (
+            <Pressable
+              key={opt}
+              onPress={() => {
+                onSelect(opt);
+                handleClose();
+              }}
+              className="items-center border-b border-border py-3"
+            >
+              <Text
+                className={`text-lg ${selected === opt ? 'font-bold text-primary' : 'text-foreground'}`}
+              >
+                {opt}{suffix}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </Animated.View>
+    </Modal>
+  );
+}
 
 type Step = 1 | 2 | 3;
 
@@ -46,11 +147,19 @@ export default function SignupScreen() {
   const [password, setPassword] = React.useState('');
   const [passwordConfirm, setPasswordConfirm] = React.useState('');
   const [nickname, setNickname] = React.useState('');
-  const [birthYear, setBirthYear] = React.useState('');
-  const [birthMonth, setBirthMonth] = React.useState('');
-  const [birthDay, setBirthDay] = React.useState('');
+  const [birthYear, setBirthYear] = React.useState<number | null>(null);
+  const [birthMonth, setBirthMonth] = React.useState<number | null>(null);
+  const [birthDay, setBirthDay] = React.useState<number | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
+  const [showPicker, setShowPicker] = React.useState<'year' | 'month' | 'day' | null>(null);
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1949 }, (_, i) => currentYear - i);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
   const seedStage: GrowthStage = step as GrowthStage;
 
@@ -124,6 +233,17 @@ export default function SignupScreen() {
     3: '거의 다 왔어요!',
   }[step];
 
+  const pickerOptions = showPicker === 'year' ? years : showPicker === 'month' ? months : days;
+  const pickerSuffix = showPicker === 'year' ? '년' : showPicker === 'month' ? '월' : '일';
+  const pickerTitle = showPicker === 'year' ? '출생연도' : showPicker === 'month' ? '월' : '일';
+  const pickerSelected = showPicker === 'year' ? birthYear : showPicker === 'month' ? birthMonth : birthDay;
+
+  const handlePickerSelect = (value: number) => {
+    if (showPicker === 'year') setBirthYear(value);
+    else if (showPicker === 'month') setBirthMonth(value);
+    else if (showPicker === 'day') setBirthDay(value);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-background">
       <KeyboardAvoidingView
@@ -175,7 +295,7 @@ export default function SignupScreen() {
           {step === 1 && (
             <View className="w-full gap-3">
               <TextInput
-                className="h-14 rounded-xl border border-border bg-card px-4 text-base text-foreground"
+                className="h-14 rounded-2xl bg-muted px-4 text-base text-foreground"
                 placeholder="이메일 주소"
                 placeholderTextColor="hsl(30 16% 47%)"
                 value={email}
@@ -185,7 +305,7 @@ export default function SignupScreen() {
                 autoComplete="email"
                 autoFocus
               />
-              <Button onPress={handleNext} size="lg" className="mt-2 w-full bg-primary">
+              <Button onPress={handleNext} size="lg" className="mt-2 w-full bg-sprout">
                 <Text className="font-semibold text-primary-foreground">다음</Text>
               </Button>
             </View>
@@ -193,26 +313,50 @@ export default function SignupScreen() {
 
           {step === 2 && (
             <View className="w-full gap-3">
-              <TextInput
-                className="h-14 rounded-xl border border-border bg-card px-4 text-base text-foreground"
-                placeholder="비밀번호 (6자 이상)"
-                placeholderTextColor="hsl(30 16% 47%)"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoComplete="new-password"
-                autoFocus
-              />
-              <TextInput
-                className="h-14 rounded-xl border border-border bg-card px-4 text-base text-foreground"
-                placeholder="비밀번호 확인"
-                placeholderTextColor="hsl(30 16% 47%)"
-                value={passwordConfirm}
-                onChangeText={setPasswordConfirm}
-                secureTextEntry
-                autoComplete="new-password"
-              />
-              <Button onPress={handleNext} size="lg" className="mt-2 w-full bg-primary">
+              <View className="relative">
+                <TextInput
+                  className="h-14 rounded-2xl bg-muted px-4 pr-12 text-base text-foreground"
+                  placeholder="비밀번호 (6자 이상)"
+                  placeholderTextColor="hsl(30 16% 47%)"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoComplete="new-password"
+                  autoFocus
+                />
+                <Pressable
+                  onPress={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-0 bottom-0 justify-center"
+                >
+                  {showPassword ? (
+                    <EyeOff size={20} color="hsl(30 16% 47%)" />
+                  ) : (
+                    <Eye size={20} color="hsl(30 16% 47%)" />
+                  )}
+                </Pressable>
+              </View>
+              <View className="relative">
+                <TextInput
+                  className="h-14 rounded-2xl bg-muted px-4 pr-12 text-base text-foreground"
+                  placeholder="비밀번호 확인"
+                  placeholderTextColor="hsl(30 16% 47%)"
+                  value={passwordConfirm}
+                  onChangeText={setPasswordConfirm}
+                  secureTextEntry={!showPasswordConfirm}
+                  autoComplete="new-password"
+                />
+                <Pressable
+                  onPress={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                  className="absolute right-4 top-0 bottom-0 justify-center"
+                >
+                  {showPasswordConfirm ? (
+                    <EyeOff size={20} color="hsl(30 16% 47%)" />
+                  ) : (
+                    <Eye size={20} color="hsl(30 16% 47%)" />
+                  )}
+                </Pressable>
+              </View>
+              <Button onPress={handleNext} size="lg" className="mt-2 w-full bg-sprout">
                 <Text className="font-semibold text-primary-foreground">다음</Text>
               </Button>
             </View>
@@ -221,7 +365,7 @@ export default function SignupScreen() {
           {step === 3 && (
             <View className="w-full gap-3">
               <TextInput
-                className="h-14 rounded-xl border border-border bg-card px-4 text-base text-foreground"
+                className="h-14 rounded-2xl bg-muted px-4 text-base text-foreground"
                 placeholder="이름 (닉네임)"
                 placeholderTextColor="hsl(30 16% 47%)"
                 value={nickname}
@@ -233,39 +377,36 @@ export default function SignupScreen() {
                 생년월일 (선택)
               </Text>
               <View className="flex-row gap-2">
-                <TextInput
-                  className="h-14 flex-1 rounded-xl border border-border bg-card px-4 text-center text-base text-foreground"
-                  placeholder="YYYY"
-                  placeholderTextColor="hsl(30 16% 47%)"
-                  value={birthYear}
-                  onChangeText={(text) => setBirthYear(text.replace(/[^0-9]/g, '').slice(0, 4))}
-                  keyboardType="number-pad"
-                  maxLength={4}
-                />
-                <TextInput
-                  className="h-14 w-20 rounded-xl border border-border bg-card px-4 text-center text-base text-foreground"
-                  placeholder="MM"
-                  placeholderTextColor="hsl(30 16% 47%)"
-                  value={birthMonth}
-                  onChangeText={(text) => setBirthMonth(text.replace(/[^0-9]/g, '').slice(0, 2))}
-                  keyboardType="number-pad"
-                  maxLength={2}
-                />
-                <TextInput
-                  className="h-14 w-20 rounded-xl border border-border bg-card px-4 text-center text-base text-foreground"
-                  placeholder="DD"
-                  placeholderTextColor="hsl(30 16% 47%)"
-                  value={birthDay}
-                  onChangeText={(text) => setBirthDay(text.replace(/[^0-9]/g, '').slice(0, 2))}
-                  keyboardType="number-pad"
-                  maxLength={2}
-                />
+                <Pressable
+                  onPress={() => setShowPicker('year')}
+                  className="h-14 flex-1 items-center justify-center rounded-2xl bg-muted"
+                >
+                  <Text className={`text-base ${birthYear ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {birthYear ? `${birthYear}년` : '년'}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setShowPicker('month')}
+                  className="h-14 flex-1 items-center justify-center rounded-2xl bg-muted"
+                >
+                  <Text className={`text-base ${birthMonth ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {birthMonth ? `${birthMonth}월` : '월'}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setShowPicker('day')}
+                  className="h-14 flex-1 items-center justify-center rounded-2xl bg-muted"
+                >
+                  <Text className={`text-base ${birthDay ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {birthDay ? `${birthDay}일` : '일'}
+                  </Text>
+                </Pressable>
               </View>
               <Button
                 onPress={handleSignup}
                 disabled={isLoading}
                 size="lg"
-                className="mt-2 w-full bg-bloom"
+                className="mt-2 w-full bg-sprout"
               >
                 {isLoading ? (
                   <ActivityIndicator size="small" color="hsl(0 0% 98%)" />
@@ -286,6 +427,18 @@ export default function SignupScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Birth date picker modal */}
+      {showPicker !== null && (
+        <BottomSheetPicker
+          title={pickerTitle}
+          options={pickerOptions}
+          suffix={pickerSuffix}
+          selected={pickerSelected}
+          onSelect={handlePickerSelect}
+          onClose={() => setShowPicker(null)}
+        />
+      )}
     </SafeAreaView>
   );
 }
