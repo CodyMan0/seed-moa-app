@@ -4,4 +4,5 @@ export {
   cancelVerseReminders,
   cancelAllReminders,
   setupNotificationHandler,
+  scheduleMonthlyReminder,
 } from './lib/notification-service'

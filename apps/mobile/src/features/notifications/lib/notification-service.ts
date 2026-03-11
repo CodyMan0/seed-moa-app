@@ -62,6 +62,43 @@ export async function cancelAllReminders(): Promise<void> {
 }
 
 /**
+ * Schedule a monthly summary notification for the last day of the current month at 9 PM
+ */
+export async function scheduleMonthlyReminder() {
+  // Cancel existing monthly reminder
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync()
+  for (const notif of scheduled) {
+    if (notif.content.data?.type === 'monthly_summary') {
+      await Notifications.cancelScheduledNotificationAsync(notif.identifier)
+    }
+  }
+
+  // Get last day of current month
+  const now = new Date()
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+
+  // If we're past the last day of the month already, schedule for next month
+  if (now.getDate() === lastDay.getDate() && now.getHours() >= 21) {
+    lastDay.setMonth(lastDay.getMonth() + 1)
+    lastDay.setDate(new Date(lastDay.getFullYear(), lastDay.getMonth() + 1, 0).getDate())
+  }
+
+  lastDay.setHours(21, 0, 0, 0) // 9 PM
+
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: '🌱 이번 달 암송 리포트',
+      body: '이번 달의 말씀 암송 여정을 확인해보세요!',
+      data: { type: 'monthly_summary' },
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: lastDay,
+    },
+  })
+}
+
+/**
  * Set up the notification handler. Call on app startup.
  */
 export function setupNotificationHandler(): void {
