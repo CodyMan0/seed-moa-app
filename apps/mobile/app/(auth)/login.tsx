@@ -39,7 +39,7 @@ export default function LoginScreen() {
           <View className="mb-10 items-center gap-3">
             <SeedCharacter stage={1} size={100} />
             <Text variant="h1" className="text-foreground">
-              말씀암송
+              씨앗모아
             </Text>
             <Text variant="muted">마음 밭에 말씀을 심어보세요</Text>
           </View>

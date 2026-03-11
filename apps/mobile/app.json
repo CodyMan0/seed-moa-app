@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "말씀암송",
+    "name": "씨앗모아",
     "slug": "memorize-bible",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FDF6EC"
     },
     "assetBundlePatterns": [
       "**/*"

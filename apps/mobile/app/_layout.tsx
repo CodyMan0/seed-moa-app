@@ -1,17 +1,20 @@
 import '@/global.css';
 import { setupNotificationHandler } from '@/features/notifications';
 import { NAV_THEME } from '@/shared/components/ui/lib/theme';
+import { AppSplashScreen } from '@/shared/components/ui/splash-screen';
+import { useSession } from '@/shared/hooks/useSession';
 
 import { ThemeProvider } from '@react-navigation/native';
 import { PortalHost } from '@rn-primitives/portal';
 import * as Notifications from 'expo-notifications';
+import * as SplashScreen from 'expo-splash-screen';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
-import { useSession } from '@/shared/hooks/useSession';
+SplashScreen.preventAutoHideAsync();
 
 // Set up notification handler before any component renders
 setupNotificationHandler();
@@ -21,6 +24,12 @@ export { ErrorBoundary } from 'expo-router';
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const { isLoading, session } = useSession();
+  const [showSplash, setShowSplash] = React.useState(true);
+
+  const handleSplashFinish = React.useCallback(() => {
+    setShowSplash(false);
+    SplashScreen.hideAsync();
+  }, []);
 
   // Handle notification taps to navigate to practice screen
   React.useEffect(() => {
@@ -45,6 +54,14 @@ export default function RootLayout() {
       });
     }
   }, [session?.user]);
+
+  if (showSplash) {
+    return (
+      <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
+        <AppSplashScreen onFinish={handleSplashFinish} />
+      </ThemeProvider>
+    );
+  }
 
   if (isLoading) {
     return (
