@@ -22,7 +22,10 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = React.useState(false)
 
   const fetchData = React.useCallback(async () => {
-    if (!session?.user?.id) return
+    if (!session?.user?.id) {
+      setIsLoading(false)
+      return
+    }
     try {
       const [versesData, streakData, reviewLogsData] = await Promise.all([
         getDueVerses(session.user.id),

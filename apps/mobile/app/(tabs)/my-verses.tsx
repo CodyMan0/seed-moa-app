@@ -15,7 +15,10 @@ export default function MyVersesScreen() {
   const [isLoading, setIsLoading] = React.useState(true)
 
   const fetchVerses = React.useCallback(async () => {
-    if (!session?.user?.id) return
+    if (!session?.user?.id) {
+      setIsLoading(false)
+      return
+    }
     try {
       const data = await getMemorizeVerses(session.user.id)
       setVerses(data)
