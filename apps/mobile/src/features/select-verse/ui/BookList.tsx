@@ -7,20 +7,24 @@ import { Text } from '@/shared/components/ui/text';
 
 type BookListProps = {
   onSelect: (book: BibleBook) => void;
+  filter?: string;
 };
 
-const sections = [
-  {
-    title: '구약',
-    data: BIBLE_BOOKS.filter((b) => b.testament === 'old'),
-  },
-  {
-    title: '신약',
-    data: BIBLE_BOOKS.filter((b) => b.testament === 'new'),
-  },
-];
+export function BookList({ onSelect, filter }: BookListProps) {
+  const sections = React.useMemo(() => {
+    const query = filter?.trim().toLowerCase() ?? '';
+    const oldBooks = BIBLE_BOOKS.filter(
+      (b) => b.testament === 'old' && (!query || b.name.toLowerCase().includes(query) || b.shortName.toLowerCase().includes(query))
+    );
+    const newBooks = BIBLE_BOOKS.filter(
+      (b) => b.testament === 'new' && (!query || b.name.toLowerCase().includes(query) || b.shortName.toLowerCase().includes(query))
+    );
+    return [
+      ...(oldBooks.length > 0 ? [{ title: '구약', data: oldBooks }] : []),
+      ...(newBooks.length > 0 ? [{ title: '신약', data: newBooks }] : []),
+    ];
+  }, [filter]);
 
-export function BookList({ onSelect }: BookListProps) {
   return (
     <SectionList
       sections={sections}
