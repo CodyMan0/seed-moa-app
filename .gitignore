@@ -1,0 +1,80 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Turborepo
+.turbo/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Next.js
+.next/
+out/
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+.env
+.env.*
+!.env.example
+
+# typescript
+*.tsbuildinfo
+
+app-example
+
+.cursor/
+.claude/
+
+# Native directories
+ios/
+android/
+
+keys/
+
+# Secrets and credentials
+secrets/
+credentials/
+*.keystore
+google-services.json
+GoogleService-Info.plist
+sentry.properties
+
+expo-*.db
+.env.local
+
+# Logs
+*.log
+
+# Plan and notes (optional - remove if you want to share)
+notes.md
+task_plan.md
+.agents/
+.codex/
+.omc/
+.opencode/
