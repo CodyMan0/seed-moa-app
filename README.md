@@ -1,73 +1,46 @@
-# Minimal Template
+# 씨앗모아 - 성경 암송 앱
 
-This is a [React Native](https://reactnative.dev/) project built with [Expo](https://expo.dev/) and [React Native Reusables](https://reactnativereusables.com).
+마음 밭에 말씀을 심어보세요.
 
-It was initialized using the following command:
+## 주요 기능
 
-```bash
-npx @react-native-reusables/cli@latest init -t subpick-app
+- **성경 구절 선택**: 개역개정 성경에서 구절을 검색하고 암송 목록에 추가
+- **암송 연습**: 전체보기 → 초성힌트 → 빈칸채우기 → 타이핑 4단계 학습
+- **암송 관리**: 암송중/완료 상태 관리, 직접 완료 처리
+- **월별 성장**: 매월 암송 일수에 따른 5단계 성장 (씨앗 → 새싹 → 줄기 → 꽃봉오리 → 꽃)
+- **캘린더**: 암송한 날(초록)/놓친 날(빨강) 시각화
+- **알림 설정**: 매일 암송 알림 시간 및 목표 일수 설정
+- **더보기**: 프로필, 이름 변경, 문의하기, 이용약관, 개인정보처리방침
+
+## 기술 스택
+
+- **Framework**: Expo (React Native) + expo-router
+- **Styling**: NativeWind (Tailwind CSS)
+- **Backend**: Supabase (Auth, PostgreSQL, RLS)
+- **Architecture**: Feature Sliced Design (FSD)
+- **Language**: TypeScript
+
+## 프로젝트 구조
+
+```
+apps/mobile/
+├── app/                    # 라우팅 (expo-router)
+│   ├── (auth)/             # 로그인, 회원가입, 비밀번호 찾기
+│   ├── (tabs)/             # 홈, 성경, 성장, 내 암송, 더보기
+│   └── practice/           # 암송 연습 화면
+├── src/
+│   ├── entities/           # 비즈니스 엔티티 (memorize, bible, monthly-stats)
+│   ├── features/           # 비즈니스 로직 (auth, review, practice, notifications)
+│   ├── shared/             # 공통 UI, 유틸, Supabase 설정
+│   └── widgets/            # 조합 UI (calendar, growth-journey)
+└── supabase/
+    └── migrations/         # DB 마이그레이션
 ```
 
-## Getting Started
-
-To run the development server:
+## 실행 방법
 
 ```bash
-    npm run dev
-    # or
-    yarn dev
-    # or
-    pnpm dev
-    # or
-    bun dev
+pnpm install
+cd apps/mobile
+npx expo start
 ```
-
-This will start the Expo Dev Server. Open the app in:
-
-- **iOS**: press `i` to launch in the iOS simulator _(Mac only)_
-- **Android**: press `a` to launch in the Android emulator
-- **Web**: press `w` to run in a browser
-
-You can also scan the QR code using the [Expo Go](https://expo.dev/go) app on your device. This project fully supports running in Expo Go for quick testing on physical devices.
-
-## Adding components
-
-You can add more reusable components using the CLI:
-
-```bash
-npx react-native-reusables/cli@latest add [...components]
-```
-
-> e.g. `npx react-native-reusables/cli@latest add input textarea`
-
-If you don't specify any component names, you'll be prompted to select which components to add interactively. Use the `--all` flag to install all available components at once.
-
-## Project Features
-
-- ⚛️ Built with [Expo Router](https://expo.dev/router)
-- 🎨 Styled with [Tailwind CSS](https://tailwindcss.com/) via [Nativewind](https://www.nativewind.dev/)
-- 📦 UI powered by [React Native Reusables](https://github.com/founded-labs/react-native-reusables)
-- 🚀 New Architecture enabled
-- 🔥 Edge to Edge enabled
-- 📱 Runs on iOS, Android, and Web
-
-## Learn More
-
-To dive deeper into the technologies used:
-
-- [React Native Docs](https://reactnative.dev/docs/getting-started)
-- [Expo Docs](https://docs.expo.dev/)
-- [Nativewind Docs](https://www.nativewind.dev/)
-- [React Native Reusables](https://reactnativereusables.com)
-
-## Deploy with EAS
-
-The easiest way to deploy your app is with [Expo Application Services (EAS)](https://expo.dev/eas).
-
-- [EAS Build](https://docs.expo.dev/build/introduction/)
-- [EAS Updates](https://docs.expo.dev/eas-update/introduction/)
-- [EAS Submit](https://docs.expo.dev/submit/introduction/)
-
----
-
-If you enjoy using React Native Reusables, please consider giving it a ⭐ on [GitHub](https://github.com/founded-labs/react-native-reusables). Your support means a lot!
