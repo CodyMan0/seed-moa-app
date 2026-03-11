@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { BookmarkCheck, BookOpen, Home } from 'lucide-react-native';
+import { BookmarkCheck, BookOpen, Home, Settings } from 'lucide-react-native';
 
 export default function TabsLayout() {
   return (
@@ -37,6 +37,13 @@ export default function TabsLayout() {
         options={{
           title: '내 암송',
           tabBarIcon: ({ color, size }) => <BookmarkCheck color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: '설정',
+          tabBarIcon: ({ color, size }) => <Settings color={color} size={size} />,
         }}
       />
     </Tabs>

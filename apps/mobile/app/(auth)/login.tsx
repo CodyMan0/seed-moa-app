@@ -2,7 +2,7 @@ import { Button } from '@/shared/components/ui/button';
 import { Text } from '@/shared/components/ui/text';
 import { SeedCharacter } from '@/shared/components/ui/seed-character';
 import { signInWithEmail } from '@/features/auth';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import * as React from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -86,6 +86,14 @@ export default function LoginScreen() {
                 <Text className="text-muted-foreground">계정이 없으신가요? 회원가입</Text>
               </Button>
             </Link>
+
+            <Button
+              variant="ghost"
+              className="w-full"
+              onPress={() => router.replace('/(tabs)')}
+            >
+              <Text className="text-muted-foreground underline">비회원으로 둘러보기</Text>
+            </Button>
           </View>
         </View>
       </KeyboardAvoidingView>
