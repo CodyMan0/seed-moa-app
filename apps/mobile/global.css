@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  font-family: 'Pretendard-Regular';
+}
+
 @layer base {
   :root {
     --background: 37 88% 96%;        /* #FDF6EC - 밀색 배경 */
@@ -22,7 +26,7 @@
     --muted: 37 30% 92%;             /* #F5EDE0 */
     --muted-foreground: 30 16% 47%;  /* #8C7A62 - 보조 텍스트 */
 
-    --accent: 20 100% 65%;           /* #FF8F50 - 주황 강조 */
+    --accent: 25 45% 40%;           /* #73A688 - 부드러운 세이지 그린 */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -39,8 +43,8 @@
     --soil: 40 74% 31%;              /* #8B6914 */
     --sprout: 122 39% 49%;           /* #4CAF50 */
     --sprout-light: 122 38% 64%;     /* #81C784 */
-    --bloom: 20 100% 65%;            /* #FF8F50 */
-    --bloom-light: 20 100% 76%;      /* #FFB085 */
+    --bloom: 25 45% 40%;             /* #944F38 - 짙은 흙갈색 */
+    --bloom-light: 25 35% 55%;       /* #B8856A */
     --sky: 197 71% 73%;              /* #87CEEB */
     --water: 213 68% 68%;            /* #64B5F6 */
   }
@@ -64,7 +68,7 @@
     --muted: 25 15% 19%;
     --muted-foreground: 30 20% 56%;  /* #A89478 */
 
-    --accent: 20 100% 65%;
+    --accent: 25 45% 40%;
     --accent-foreground: 25 20% 8%;
 
     --destructive: 0 84% 60%;
@@ -79,8 +83,8 @@
     --soil: 40 74% 31%;
     --sprout: 122 39% 49%;
     --sprout-light: 122 38% 64%;
-    --bloom: 20 100% 65%;
-    --bloom-light: 20 100% 76%;
+    --bloom: 150 25% 55%;
+    --bloom-light: 150 22% 68%;
     --sky: 197 71% 73%;
     --water: 213 68% 68%;
   }
